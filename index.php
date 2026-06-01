@@ -1,3 +1,39 @@
+<?php
+// ✅ This MUST be the first thing in index.php — before ANY HTML, spaces, or blank lines
+session_start();
+include("dbconnect.php");
+
+if(isset($_POST['send']))
+{
+    $name       = $_POST['name'];
+    $country    = $_POST['country'];
+    $code       = $_POST['countryCode'];
+    $mobile     = $_POST['mobile'];
+    $email      = $_POST['email'];
+    $service    = $_POST['service'];
+    $message    = $_POST['message'];
+    $fullMobile = $code . $mobile;
+    $date       = date("Y-m-d "); // ✅ MySQL-compatible format
+
+    $stmt = mysqli_prepare($connect,
+        "INSERT INTO messagedb (name, country, mobile, email, service, message, date)
+         VALUES (?, ?, ?, ?, ?, ?, ?)"
+    );
+
+    mysqli_stmt_bind_param($stmt, "sssssss",
+        $name, $country, $fullMobile, $email, $service, $message, $date
+    );
+
+    if(mysqli_stmt_execute($stmt))
+    {
+        $_SESSION['form_status'] = 'success';
+    }
+    else
+    {
+        $_SESSION['form_status'] = 'error';
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +54,12 @@
 
   <!-- CSS -->
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -374,7 +415,7 @@ window.addEventListener("load", () => {
             <ul class="navbar-nav ms-auto align-items-lg-center">
 
                 <li class="nav-item">
-                    <a class="nav-link active" href="#home">
+                    <a class="nav-link " href="#home">
                         <i class="fa-solid fa-house"></i> Home
                     </a>
                 </li>
@@ -588,182 +629,439 @@ body.light-mode .custom-dropdown .dropdown-item { color: #334155; }
     body.light-mode .custom-dropdown { background: #f8fafc !important; }
 }
 </style>
+<!-- ================= HERO SECTION START ================= -->
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+<style>
+
+:root{
+    --primary:#00b4ec;
+}
+
+/* HERO SECTION */
+
+.hero-section{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    overflow:hidden;
+    padding:100px 0;
+
+    
+    url("static/image/heroo.jpg");
+
+    background-size:cover;
+    background-position:center;
+}
+
+.hero-section::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:url("static/image/heroo.jpg");
+    background-size:cover;
+    background-position:center;
+
+  
+
+    z-index:-1;
+}
+
+
+
+/* LIGHT MODE */
+
+
+
+body.light-mode .hero-title{
+    color:#14bbe0;
+}
+
+body.light-mode .hero-desc{
+    color:#374151;
+}
+
+body.light-mode .hero-stat-card{
+    background:rgba(255,255,255,.85);
+    border:1px solid rgba(0,0,0,.08);
+}
+
+body.light-mode .btn-custom-outline{
+    color:#111827;
+    border-color:#111827;
+}
+
+body.light-mode .btn-custom-outline:hover{
+    background:#111827;
+    color:#fff;
+}
+
+/* CONTENT */
+
+.hero-content{
+    position:relative;
+    z-index:10;
+}
+
+.hero-title{
+    font-family:'Anton',sans-serif;
+    font-size:5rem;
+    line-height:0.9;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    font-weight:200;
+}
+
+@font-face{
+    font-family:'Rockybilly';
+    src:url('static/font/rockybilly.regular.ttf') format('truetype');
+}
+
+.script-text{
+    font-family:'Rockybilly',cursive;
+    color:#00b4ec;
+    font-size:2rem;
+    line-height:2;
+    display:inline-block;
+    transform:rotate(-4deg);
+    text-transform:none;
+}
+
+.hero-desc{
+    max-width:600px;
+    font-size:1.05rem;
+    color:#cbd5e1;
+    line-height:1.8;
+    margin-bottom:35px;
+}
+
+.hero-desc strong{
+    color:var(--primary);
+}
+
+/* BUTTONS */
+
+.btn-custom-blue{
+    background:var(--primary);
+    color:#000;
+    border:2px solid var(--primary);
+    padding:14px 35px;
+    border-radius:50px;
+    font-weight:600;
+    transition:.4s;
+    text-decoration:none;
+}
+
+.btn-custom-blue:hover{
+    transform:translateY(-5px);
+    color:#000;
+    box-shadow:0 15px 35px rgba(0,180,236,.35);
+}
+
+.btn-custom-outline{
+    background:transparent;
+    color:#fff;
+    border:2px solid #fff;
+    padding:14px 35px;
+    border-radius:50px;
+    font-weight:600;
+    transition:.4s;
+    text-decoration:none;
+}
+
+.btn-custom-outline:hover{
+    background:#fff;
+    color:#000;
+}
+
+/* STATS */
+
+.hero-stats{
+    display:flex;
+    gap:20px;
+    margin-top:50px;
+    flex-wrap:wrap;
+}
+
+.hero-stat-card{
+    flex:1;
+    min-width:180px;
+
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:20px;
+    padding:25px;
+    text-align:center;
+
+    transition:.4s;
+}
+
+.hero-stat-card:hover{
+    transform:translateY(-10px);
+}
+
+.stat-icon{
+    width:60px;
+    height:60px;
+
+    margin:auto auto 15px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+    background:rgba(0,180,236,.15);
+
+    color:var(--primary);
+    font-size:22px;
+}
+
+.hero-stat-card h2{
+    color:var(--primary);
+    font-size:2rem;
+    margin-bottom:8px;
+}
+
+.hero-stat-card p{
+    color:inherit;
+    margin:0;
+}
+
+/* MOBILE */
+
+@media(max-width:991px){
+
+.hero-section{
+    text-align:center;
+
+    background:url("static/image/heroo.jpg");
+
+    background-size:cover;
+}
+
+.hero-title{
+    font-size:5rem;
+}
+
+.script-text{
+    font-size:2rem;
+}
+
+.hero-desc{
+    margin:auto auto 30px;
+}
+
+.hero-stats{
+    justify-content:center;
+}
+
+}
+
+@media(max-width:576px){
+
+.hero-section{
+    padding:80px 0;
+}
+
+.hero-title{
+    font-size:2.8rem;
+}
+
+.script-text{
+    font-size:1rem;
+}
+
+.hero-desc{
+    font-size:.95rem;
+}
+
+.hero-stat-card{
+    min-width:100%;
+}
+
+}
+@media(max-width:991px){
+
+.hero-section{
+    text-align:center;
+
+    background:url("static/image/heroo.jpg");
+
+    background-size:cover;
+    background-position:center center;
+    background-repeat:no-repeat;
+}
+
+}
+
+</style>
+
+<section class="hero-section" id="home">
+
+<div class="container">
+
+<div class="row align-items-center">
+
+<div class="col-lg-7 hero-content">
+
+<h1 class="hero-title"
+data-aos="fade-up">
+
+We Build
+<span class="script-text">Brands</span><br>
+
+That
+<span class="script-text">Grow</span>
+
+Digitally
+
+</h1>
+
+<p class="hero-desc"
+data-aos="fade-up"
+data-aos-delay="150">
+
+At <strong>AlphaCrest Digital</strong>,
+we help businesses grow through strategic branding,
+social media marketing, high-converting content,
+and performance-driven digital campaigns.
+
+</p>
+
+<div class="d-flex flex-wrap gap-3"
+data-aos="fade-up"
+data-aos-delay="250">
+
+<a href="#contact" class="btn-custom-blue">
+Get Started
+</a>
+
+<a href="#works" class="btn-custom-outline">
+View Our Work
+</a>
+
+</div>
+
+<div class="hero-stats"
+data-aos="fade-up"
+data-aos-delay="350">
+
+<div class="hero-stat-card">
+
+<div class="stat-icon">
+<i class="fa-solid fa-rocket"></i>
+</div>
+
+<h2>
+<span class="counter" data-target="150">0</span>+
+</h2>
+
+<p>Projects Completed</p>
+
+</div>
+
+<div class="hero-stat-card">
+
+<div class="stat-icon">
+<i class="fa-solid fa-users"></i>
+</div>
+
+<h2>
+<span class="counter" data-target="98">0</span>%
+</h2>
+
+<p>Happy Clients</p>
+
+</div>
+
+<div class="hero-stat-card">
+
+<div class="stat-icon">
+<i class="fa-solid fa-award"></i>
+</div>
+
+<h2>
+<span class="counter" data-target="4">0</span>+
+</h2>
+
+<p>Years Experience</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 
 <script>
-// Highly-isolated global execution loop completely bypasses other crashing code blocks
-function globalToggleTheme(event) {
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-    
-    // Toggle class directly on body
-    var bodyEl = document.body;
-    bodyEl.classList.toggle('light-mode');
-    var isLight = bodyEl.classList.contains('light-mode');
-    
-    // Update both toggle button icons instantly
-    var targets = document.querySelectorAll('.theme-toggle');
-    for (var i = 0; i < targets.length; i++) {
-        if (isLight) {
-            targets[i].innerHTML = '<i class="fa-solid fa-sun"></i>';
-        } else {
-            targets[i].innerHTML = '<i class="fa-solid fa-moon"></i>';
-        }
-    }
-}
 
-// Separate Bootstrap link close logic
-document.addEventListener("DOMContentLoaded", function() {
-    var menuCollapse = document.getElementById('navbarNav');
-    if(menuCollapse) {
-        var navItems = document.querySelectorAll('.nav-link:not(.dropdown-toggle), .dropdown-item');
-        navItems.forEach(function(item) {
-            item.addEventListener('click', function() {
-                if (menuCollapse.classList.contains('show') && typeof bootstrap !== 'undefined') {
-                    var api = bootstrap.Collapse.getInstance(menuCollapse) || new bootstrap.Collapse(menuCollapse);
-                    api.hide();
-                }
-            });
-        });
-    }
+AOS.init({
+    duration:1000,
+    once:true
 });
-</script>
-<!------------------------------------------------------------------------------>
-<!-- ================= PREMIUM HERO SECTION ================= -->
 
-<section class="hero-premium" id="home">
+const counters=document.querySelectorAll(".counter");
 
-    <!-- BACKGROUND EFFECTS -->
+const observer=new IntersectionObserver(entries=>{
 
-    <div class="hero-blur hero-blur-1"></div>
-    <div class="hero-blur hero-blur-2"></div>
+entries.forEach(entry=>{
 
-    <!-- PARTICLES -->
+if(entry.isIntersecting){
 
-    <div class="hero-particles">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
+const counter=entry.target;
+const target=+counter.dataset.target;
 
-    <div class="container">
+let count=0;
 
-        <div class="row align-items-center hero-row">
+const updateCounter=()=>{
 
-            <!-- ================= LEFT CONTENT ================= -->
+count+=target/80;
 
-            <div class="col-lg-6 hero-content"
-                 data-aos="fade-right">
+if(count<target){
 
-                <!-- BADGE -->
+counter.innerText=Math.ceil(count);
 
-                <div class="hero-badge">
+requestAnimationFrame(updateCounter);
 
-                    <i class="fa-solid fa-bolt"></i>
+}else{
 
-                    Trichy’s Creative Digital Marketing Agency
+counter.innerText=target;
 
-                </div>
-<h1 class="hero-title">
-    WE BUILD BRANDS<br>
-    THAT <span class="grow-text">GROW<br>DIGITALLY</span>
-</h1>
-<style>
-    .grow-text{
-    display:inline-block;
-    font-weight:800;
-    color:#38bdf8;
-    line-height:1.1;
 }
-    </style>
 
-                   
+};
 
-                </h1>
+updateCounter();
 
-                <!-- DESCRIPTION -->
+observer.unobserve(counter);
 
-                <p class="hero-description">
-                    <span class="typing-text"></span>
-                </p>
+}
 
-                <!-- BUTTONS -->
+});
 
-                <div class="hero-buttons">
+},{threshold:0.5});
 
-                    <a href="#contact"
-                       class="hero-btn-primary">
+counters.forEach(counter=>{
+observer.observe(counter);
+});
 
-                        Get Started
-
-                        <i class="fa-solid fa-arrow-right"></i>
-
-                    </a>
-
-                    <a href="#portfolio"
-                       class="hero-btn-secondary">
-
-                        View Our Works
-
-                    </a>
-
-                </div>
-
-                <!-- STATS -->
-
-                <div class="hero-stats">
-
-                    <div class="hero-stat-card">
-
-                        <div class="stat-icon">
-                            <i class="fa-solid fa-rocket"></i>
-                        </div>
-
-                        <h2>
-                            <span class="counter"
-                                  data-target="150">0</span>+
-                        </h2>
-
-                        <p>Projects Completed</p>
-
-                    </div>
-
-                    <div class="hero-stat-card">
-
-                        <div class="stat-icon">
-                            <i class="fa-solid fa-users"></i>
-                        </div>
-
-                        <h2>
-                            <span class="counter"
-                                  data-target="98">0</span>%
-                        </h2>
-
-                        <p>Happy Clients</p>
-
-                    </div>
-
-                    <div class="hero-stat-card">
-
-                        <div class="stat-icon">
-                            <i class="fa-solid fa-award"></i>
-                        </div>
-
-                        <h2>
-                            <span class="counter"
-                                  data-target="4">0</span>+
-                        </h2>
-
-                        <p>Years Experience</p>
-
-                    </div>
-
-                </div>
-                <!-- ================= COUNTER LOOP SCRIPT ================= -->
-
+</script>
 <script>
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -820,797 +1118,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </script>
 
-            </div>
-
-            <!-- ================= RIGHT IMAGE ================= -->
-
-            <div class="col-lg-6 hero-image-side"
-                 data-aos="fade-left">
-
-                <div class="hero-image-wrapper">
-
-                    <img src="static/image/Alpha Crest.jpg"
-                         alt="AlphaCrest Digital"
-                         class="hero-main-image">
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- ================= HERO STYLE ================= -->
-
-<style>
-
-/* ================= GOOGLE FONT ================= */
-
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;400;500;600;700;800&display=swap');
-
-body{
-    font-family:'Poppins',sans-serif;
-}
-
-/* ================= HERO SECTION ================= */
-
-.hero-premium{
-
-    position:relative;
-
-    overflow:hidden;
-
-    padding:120px 0 70px;
-
-    background:
-    radial-gradient(circle at top right,
-    rgba(13,110,253,0.20),
-    transparent 30%),
-
-    radial-gradient(circle at bottom left,
-    rgba(0,191,255,0.10),
-    transparent 30%),
-
-    linear-gradient(135deg,#020617,#07152f,#020617);
-}
-
-/* HERO ROW */
-
-.hero-row{
-
-    min-height:88vh;
-
-    align-items:center;
-}
-
-/* ================= BLUR EFFECT ================= */
-
-.hero-blur{
-    position:absolute;
-    border-radius:50%;
-    filter:blur(120px);
-    z-index:0;
-}
-
-.hero-blur-1{
-    width:320px;
-    height:320px;
-    background:#0d6efd55;
-    top:-120px;
-    right:-120px;
-}
-
-.hero-blur-2{
-    width:280px;
-    height:280px;
-    background:#00bfff55;
-    bottom:-100px;
-    left:-100px;
-}
-
-/* ================= PARTICLES ================= */
-
-.hero-particles span{
-
-    position:absolute;
-
-    width:5px;
-    height:5px;
-
-    background:#38bdf8;
-
-    border-radius:50%;
-
-    opacity:0.5;
-
-    animation:particleFloat 10s linear infinite;
-}
-
-.hero-particles span:nth-child(1){
-    top:20%;
-    left:15%;
-}
-
-.hero-particles span:nth-child(2){
-    top:60%;
-    left:8%;
-    animation-duration:12s;
-}
-
-.hero-particles span:nth-child(3){
-    top:30%;
-    right:15%;
-}
-
-.hero-particles span:nth-child(4){
-    bottom:20%;
-    right:10%;
-    animation-duration:14s;
-}
-
-.hero-particles span:nth-child(5){
-    top:50%;
-    left:45%;
-}
-
-@keyframes particleFloat{
-
-    0%{
-        transform:translateY(0);
-        opacity:0;
-    }
-
-    50%{
-        opacity:1;
-    }
-
-    100%{
-        transform:translateY(-120px);
-        opacity:0;
-    }
-
-}
-
-/* ================= CONTENT ================= */
-
-.hero-content{
-    position:relative;
-    z-index:2;
-}
-
-/* BADGE */
-
-.hero-badge{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    padding:10px 22px;
-
-    border-radius:60px;
-
-    background:rgba(255,255,255,0.08);
-
-    border:1px solid rgba(255,255,255,0.08);
-
-    color:#dbeafe;
-
-    font-size:13px;
-
-    margin-bottom:24px;
-
-    backdrop-filter:blur(10px);
-}
-
-.hero-badge i{
-    color:#38bdf8;
-}
-
-/* ================= TITLE ================= */
-
-.hero-title{
-
-    font-family:'Anton',sans-serif;
-
-    font-size:72px;
-
-    line-height:0.95;
-
-    font-weight:400;
-
-    letter-spacing:1px;
-
-    text-transform:uppercase;
-
-    color:white;
-
-    margin-bottom:24px;
-}
-
-/* GROW TEXT */
-
-.grow-text{
-
-    display:block;
-
-    background:linear-gradient(45deg,#0d6efd,#38bdf8,#00e0ff);
-
-    -webkit-background-clip:text;
-
-    -webkit-text-fill-color:transparent;
-
-    background-size:200% auto;
-
-    animation:textGlow 5s linear infinite;
-}
-
-@keyframes textGlow{
-
-    0%{
-        background-position:0% center;
-    }
-
-    100%{
-        background-position:200% center;
-    }
-
-}
-
-/* ================= DESCRIPTION ================= */
-
-.hero-description{
-
-    color:#cbd5e1;
-
-    font-size:16px;
-
-    line-height:1.9;
-
-    max-width:540px;
-
-    min-height:90px;
-
-    font-weight:400;
-
-    margin-bottom:0;
-}
-
-/* TYPING */
-
-.typing-text{
-
-    border-right:3px solid #38bdf8;
-
-    padding-right:5px;
-
-    animation:cursorBlink 0.8s infinite;
-}
-
-@keyframes cursorBlink{
-
-    0%{
-        border-color:#38bdf8;
-    }
-
-    50%{
-        border-color:transparent;
-    }
-
-    100%{
-        border-color:#38bdf8;
-    }
-
-}
-
-/* ================= BUTTONS ================= */
-
-.hero-buttons{
-
-    display:flex;
-
-    gap:16px;
-
-    margin-top:30px;
-
-    flex-wrap:wrap;
-}
-
-.hero-btn-primary{
-
-    background:linear-gradient(45deg,#0d6efd,#00bfff);
-
-    color:white;
-
-    padding:15px 30px;
-
-    border-radius:60px;
-
-    text-decoration:none;
-
-    font-weight:600;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    transition:0.4s ease;
-
-    box-shadow:
-    0 10px 30px rgba(13,110,253,0.30);
-}
-
-.hero-btn-primary:hover{
-
-    transform:translateY(-4px);
-
-    color:white;
-}
-
-.hero-btn-secondary{
-
-    border:1px solid rgba(255,255,255,0.12);
-
-    background:rgba(255,255,255,0.05);
-
-    color:white;
-
-    padding:15px 30px;
-
-    border-radius:60px;
-
-    text-decoration:none;
-
-    transition:0.4s ease;
-}
-
-.hero-btn-secondary:hover{
-
-    background:white;
-
-    color:#111827;
-}
-
-/* ================= STATS ================= */
-
-.hero-stats{
-
-    display:flex;
-
-    gap:18px;
-
-    flex-wrap:wrap;
-
-    margin-top:40px;
-}
-
-.hero-stat-card{
-
-    background:rgba(255,255,255,0.06);
-
-    border:1px solid rgba(255,255,255,0.08);
-
-    padding:24px 22px;
-
-    border-radius:24px;
-
-    width:170px;
-
-    backdrop-filter:blur(14px);
-
-    transition:0.4s ease;
-}
-
-.hero-stat-card:hover{
-
-    transform:translateY(-6px);
-
-    border-color:#38bdf8;
-}
-
-/* ICON */
-
-.stat-icon{
-
-    width:52px;
-    height:52px;
-
-    border-radius:16px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    margin-bottom:18px;
-
-    background:
-    linear-gradient(45deg,#0d6efd,#38bdf8);
-
-    color:white;
-
-    font-size:18px;
-}
-
-/* TEXT */
-
-.hero-stat-card h2{
-
-    font-size:38px;
-
-    font-weight:700;
-
-    color:#38bdf8;
-
-    margin-bottom:6px;
-}
-
-.hero-stat-card p{
-
-    margin:0;
-
-    color:#cbd5e1;
-
-    font-size:14px;
-}
-
-/* ================= IMAGE ================= */
-
-.hero-image-side{
-    position:relative;
-    z-index:2;
-    text-align:center;
-}
-
-.hero-image-wrapper{
-    position:relative;
-    display:inline-block;
-}
-
-.hero-main-image{
-
-    width:100%;
-
-    max-width:460px;
-
-    aspect-ratio:1/1;
-
-    object-fit:cover;
-
-    border-radius:35px;
-
-    border:1px solid rgba(255,255,255,0.08);
-
-    box-shadow:
-    0 10px 40px rgba(0,0,0,0.35),
-    0 0 70px rgba(13,110,253,0.15);
-
-    animation:floatImage 5s ease-in-out infinite;
-}
-
-@keyframes floatImage{
-
-    0%{
-        transform:translateY(0);
-    }
-
-    50%{
-        transform:translateY(-12px);
-    }
-
-    100%{
-        transform:translateY(0);
-    }
-
-}
-
-/* ================= TABLET ================= */
-
-@media(max-width:991px){
-
-    .hero-premium{
-
-        text-align:center;
-
-        padding:120px 0 70px;
-    }
-
-    .hero-row{
-        min-height:auto;
-    }
-
-    .hero-title{
-        font-size:56px;
-    }
-
-    .hero-description{
-        margin:auto;
-        min-height:100px;
-    }
-
-    .hero-buttons{
-        justify-content:center;
-    }
-
-    .hero-stats{
-        justify-content:center;
-    }
-
-    .hero-image-side{
-        margin-top:20px;
-    }
-
-}
-
-/* ================= MOBILE ================= */
-
-@media(max-width:576px){
-
-    .hero-premium{
-        padding:100px 0 60px;
-    }
-
-    .hero-title{
-
-        font-size:42px;
-
-        line-height:1.05;
-    }
-
-    .hero-description{
-
-        font-size:14px;
-
-        line-height:1.8;
-
-        min-height:120px;
-    }
-
-    .hero-buttons{
-        flex-direction:column;
-    }
-
-    .hero-btn-primary,
-    .hero-btn-secondary{
-
-        width:100%;
-
-        justify-content:center;
-    }
-
-    .hero-stat-card{
-
-        width:100%;
-    }
-
-    .hero-main-image{
-
-        max-width:100%;
-
-        border-radius:26px;
-    }
-
-    .hero-badge{
-
-        font-size:11px;
-
-        padding:10px 16px;
-    }
-
-}
-
-/* ================= LIGHT MODE ================= */
-
-body.light-mode .hero-premium{
-
-    background:
-    radial-gradient(circle at top right,
-    rgba(13,110,253,0.10),
-    transparent 30%),
-
-    radial-gradient(circle at bottom left,
-    rgba(0,191,255,0.08),
-    transparent 30%),
-
-    linear-gradient(to right,#f8fafc,#eef4ff,#ffffff);
-}
-
-body.light-mode .hero-title{
-    color:#0f172a;
-}
-
-body.light-mode .hero-description{
-    color:#475569;
-}
-
-body.light-mode .hero-badge{
-
-    background:white;
-
-    color:#0f172a;
-
-    border:1px solid #e2e8f0;
-}
-
-body.light-mode .hero-btn-secondary{
-
-    background:white;
-
-    color:#111827;
-
-    border:1px solid #dbeafe;
-}
-
-body.light-mode .hero-btn-secondary:hover{
-
-    background:#0d6efd;
-
-    color:white;
-}
-
-body.light-mode .hero-stat-card{
-
-    background:white;
-
-    border:1px solid #e2e8f0;
-
-    box-shadow:
-    0 10px 30px rgba(0,0,0,0.05);
-}
-
-body.light-mode .hero-stat-card p{
-    color:#475569;
-}
-
-</style>
-
-<!-- ================= TYPING TEXT SCRIPT ================= -->
-
+<!-- ================= HERO SECTION END ================= -->
 <script>
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const texts = [
-
-        "AlphaCrest Digital helps businesses scale with high-converting content and premium marketing strategies.",
-
-        "We create cinematic content, creative branding and viral social media campaigns for modern brands.",
-
-        "Performance marketing, content creation and strategic branding that drives real business growth."
-
-    ];
-
-    const typingElement = document.querySelector(".typing-text");
-
-    let textIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-
-    function typeEffect(){
-
-        const currentText = texts[textIndex];
-
-        if(isDeleting){
-
-            typingElement.innerHTML =
-            currentText.substring(0, charIndex--);
-
-        }else{
-
-            typingElement.innerHTML =
-            currentText.substring(0, charIndex++);
-
-        }
-
-        let speed = isDeleting ? 25 : 45;
-
-        if(!isDeleting && charIndex === currentText.length){
-
-            speed = 1800;
-            isDeleting = true;
-
-        }else if(isDeleting && charIndex === 0){
-
-            isDeleting = false;
-
-            textIndex++;
-
-            if(textIndex >= texts.length){
-                textIndex = 0;
-            }
-
-            speed = 500;
-        }
-
-        setTimeout(typeEffect, speed);
+// Highly-isolated global execution loop completely bypasses other crashing code blocks
+function globalToggleTheme(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
     }
+    
+    // Toggle class directly on body
+    var bodyEl = document.body;
+    bodyEl.classList.toggle('light-mode');
+    var isLight = bodyEl.classList.contains('light-mode');
+    
+    // Update both toggle button icons instantly
+    var targets = document.querySelectorAll('.theme-toggle');
+    for (var i = 0; i < targets.length; i++) {
+        if (isLight) {
+            targets[i].innerHTML = '<i class="fa-solid fa-sun"></i>';
+        } else {
+            targets[i].innerHTML = '<i class="fa-solid fa-moon"></i>';
+        }
+    }
+}
 
-    typeEffect();
-
-});
-
-</script>
-
-<!-- ================= COUNTER SCRIPT ================= -->
-
-<script>
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const counters = document.querySelectorAll(".counter");
-
-    let started = false;
-
-    function startCounterAnimation(){
-
-        if(started) return;
-
-        started = true;
-
-        counters.forEach(counter => {
-
-            const target = +counter.getAttribute("data-target");
-
-            let count = 0;
-
-            const speed = target / 120;
-
-            function updateCounter(){
-
-                count += speed;
-
-                if(count < target){
-
-                    counter.innerText = Math.ceil(count);
-
-                    requestAnimationFrame(updateCounter);
-
-                }else{
-
-                    counter.innerText = target;
-
+// Separate Bootstrap link close logic
+document.addEventListener("DOMContentLoaded", function() {
+    var menuCollapse = document.getElementById('navbarNav');
+    if(menuCollapse) {
+        var navItems = document.querySelectorAll('.nav-link:not(.dropdown-toggle), .dropdown-item');
+        navItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                if (menuCollapse.classList.contains('show') && typeof bootstrap !== 'undefined') {
+                    var api = bootstrap.Collapse.getInstance(menuCollapse) || new bootstrap.Collapse(menuCollapse);
+                    api.hide();
                 }
-
-            }
-
-            updateCounter();
-
+            });
         });
-
     }
-
-    const statsSection = document.querySelector(".hero-stats");
-
-    const observer = new IntersectionObserver((entries) => {
-
-        entries.forEach(entry => {
-
-            if(entry.isIntersecting){
-
-                startCounterAnimation();
-
-            }
-
-        });
-
-    }, {
-        threshold:0.4
-    });
-
-    observer.observe(statsSection);
-
 });
-
 </script>
-<!------------------------------------------------------------------------------>
+
 <style>
 /* GOOGLE FONTS */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@400;600;700;800&display=swap');
@@ -3832,6 +3381,11 @@ AOS.init({
 
 </script>
 <!------------------------------------------------------------------------------>
+<?php
+include("dbconnect.php");
+
+$logos = mysqli_query($connect,"SELECT * FROM logodb ORDER BY id DESC");
+?>
 <!-- ================= CLIENT SECTION ================= -->
 <style>
     /* ================= DARK MODE ================= */
@@ -4192,137 +3746,44 @@ body.light-mode .logo-card{
 
         <!-- LOGO SLIDER -->
 
-        <div class="logo-slider">
+       <div class="logo-slider">
 
-            <div class="logo-track">
+    <div class="logo-track">
 
-                <!-- LOGOS -->
+        <?php
+        while($row = mysqli_fetch_assoc($logos))
+        {
+        ?>
+            <div class="logo-card">
+                <img src="logouploads/<?php echo $row['logoimage']; ?>"
+                     alt="<?php echo $row['logoname']; ?>">
+            </div>
+        <?php
+        }
+        ?>
 
-                <div class="logo-card">
-                    <img src="static/clientlogo/Ag.jpg"
-                         alt="AG Logo">
-                </div>
+        <!-- Duplicate logos for smooth infinite scroll -->
 
-                <div class="logo-card">
-                    <img src="static/clientlogo/Ambur.jpg"
-                         alt="Ambur Logo">
-                </div>
+        <?php
 
-                <div class="logo-card">
-                    <img src="static/clientlogo/Aminova.png"
-                         alt="Aminova Logo">
-                </div>
+        $logos2 = mysqli_query($connect,"SELECT * FROM logodb ORDER BY id DESC");
 
-                <div class="logo-card">
-                    <img src="static/clientlogo/Dhaliwals.jpg"
-                         alt="Dhaliwals Logo">
-                </div>
+        while($row = mysqli_fetch_assoc($logos2))
+        {
+        ?>
 
-                <div class="logo-card">
-                    <img src="static/clientlogo/Dr_s Bio.jpg"
-                         alt="Dr Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Elite.jpg"
-                         alt="Elite Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/First nest.jpg"
-                         alt="First Nest Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Halofit.jpg"
-                         alt="Halofit Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Hub.jpg"
-                         alt="Hub Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Janani Motorx.jpg"
-                         alt="Janani Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Manjal.jpg"
-                         alt="Manjal Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/MJ.jpg"
-                         alt="MJ Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/MPM.jpg"
-                         alt="MPM Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Oracle.jpeg"
-                         alt="Oracle Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Peak Food.jpg"
-                         alt="Peak Food Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Shanas.jpg"
-                         alt="Shanas Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Tandour.PNG"
-                         alt="Tandour Logo">
-                </div>
-
-                <!-- DUPLICATE FOR SMOOTH LOOP -->
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Ag.jpg"
-                         alt="AG Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Ambur.jpg"
-                         alt="Ambur Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Aminova.png"
-                         alt="Aminova Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Dhaliwals.jpg"
-                         alt="Dhaliwals Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Dr_s Bio.jpg"
-                         alt="Dr Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/Elite.jpg"
-                         alt="Elite Logo">
-                </div>
-
-                <div class="logo-card">
-                    <img src="static/clientlogo/First nest.jpg"
-                         alt="First Nest Logo">
-                </div>
-
+            <div class="logo-card">
+                <img src="logouploads/<?php echo $row['logoimage']; ?>"
+                     alt="<?php echo $row['logoname']; ?>">
             </div>
 
-        </div>
+        <?php
+        }
+        ?>
+
+    </div>
+
+</div>
 
     </div>
 
@@ -5032,169 +4493,278 @@ AOS.init({
 
 </script>
 
-<!-------------------------------------------------------------------------------->
-<!-- ================= CONTACT ================= -->
+<!--------------------------------Contact------------------------------------------------>
 
-<section class="contact section-padding" id="contact">
 
-  <div class="container">
 
-    <div class="section-title text-center mb-5">
-      <h2>Let's <span>Connect</span></h2>
-    </div>
 
-    <div class="row g-4 align-items-stretch">
+<!-- ✅ All your HTML starts here, AFTER the closing ?> -->
 
-      <!-- FORM -->
-      <div class="col-lg-6">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-        <div class="contact-box">
+<!-------------------------------- Contact Section -------------------------------->
+<section class="contact-section" id="contact">
+    <div class="container">
 
-          <form  id="contactForm">
+        <div class="section-title text-center mb-5">
+            <h2>Let's <span>Connect</span></h2>
+        </div>
 
-            <div class="row g-4">
+        <div class="row g-4 align-items-stretch">
 
-              <div class="col-md-6">
-                <input type="text" class="form-control" placeholder="Your Name">
-              </div>
+            <!-- Left: Contact Form -->
+            <div class="col-lg-6">
+                <div class="contact-box">
 
-              <div class="col-md-6">
-                <input type="text" class="form-control" placeholder="Phone Number">
-              </div>
+                    <form method="POST" id="contactForm">
+                        <input type="hidden" name="send" value="1">
 
-              <div class="col-md-6">
-                <input type="email" class="form-control" placeholder="Email Address">
-              </div>
+                        <div class="row g-3">
 
-              <div class="col-md-6">
-                <input type="text" class="form-control" placeholder="Service Needed">
-              </div>
+                            <div class="col-md-6">
+                                <input type="text" name="name" id="name"
+                                    class="form-control"
+                                    placeholder="Your Name" required>
+                            </div>
 
-              <div class="col-12">
-                <textarea rows="6" class="form-control" placeholder="Your Message"></textarea>
-              </div>
+                            <div class="col-md-6">
+                                <select name="country" id="country"
+                                    class="form-control" required>
+                                    <option value="" disabled selected>Select Country</option>
+                                    <option>India</option>
+                                    <option>USA</option>
+                                    <option>UK</option>
+                                    <option>UAE</option>
+                                    <option>Singapore</option>
+                                </select>
+                            </div>
 
-              <div class="col-12 text-center">
-                <button class="btn-custom">Send Inquiry</button>
-              </div>
+                            <div class="col-md-6">
+                                <div class="phone-group">
+                                    <select name="countryCode" id="countryCode"
+                                        class="country-code" required>
+                                        <option>+91</option>
+                                        <option>+1</option>
+                                        <option>+44</option>
+                                        <option>+971</option>
+                                    </select>
 
+                                    <input type="tel" name="mobile" id="phone"
+                                        class="form-control"
+                                        placeholder="Mobile No." required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <input type="email" name="email" id="email"
+                                    class="form-control"
+                                    placeholder="Email Address" required>
+                            </div>
+
+                            <div class="col-12">
+                                <select name="service" id="service"
+                                    class="form-control" required>
+                                    <option value="" disabled selected>Select Service</option>
+                                    <option>Social Media Marketing</option>
+                                    <option>Branding</option>
+                                    <option>Content Creation</option>
+                                    <option>Meta Ads</option>
+                                    <option>Web Devlopment</option>
+                                    <option>Video Production</option>
+                                      <option>AI Storytelling Videos</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <textarea name="message" id="message"
+                                    rows="5"
+                                    class="form-control"
+                                    placeholder="Your Message" required></textarea>
+                            </div>
+
+                            <div class="col-12 text-center">
+                                <input type="submit" value="Send" id="sendBtn" class="btn-custom">
+                            </div>
+                            
+
+                        </div>
+                    </form>
+
+                </div>
             </div>
 
-          </form>
+            <!-- Right: Google Map -->
+            <div class="col-lg-6">
+                <div class="map-box">
+                    <iframe
+                        src="https://maps.google.com/maps?q=London&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                        width="100%"
+                        height="100%"
+                        style="border:0; min-height: 400px;"
+                        allowfullscreen=""
+                        loading="lazy">
+                    </iframe>
+                </div>
+            </div>
 
         </div>
-
-      </div>
-
-      <!-- MAP -->
-      <div class="col-lg-6">
-
-        <div class="map-box">
-
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.3!2d78.7047!3d10.7905!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3baaf5c8c1b5c3f7%3A0x0!2zVHJpY2h5LCBUYW1pbCBOYWR1!5e0!3m2!1sen!2sin!4v000000"
-            allowfullscreen=""
-            loading="lazy">
-          </iframe>
-
-        </div>
-
-      </div>
-
     </div>
-
-  </div>
-
 </section>
 
-<!-- ================= CSS ================= -->
+<!-- SweetAlert JS loaded at the bottom AFTER all HTML -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<?php if(isset($_SESSION['form_status'])) { ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    <?php if($_SESSION['form_status'] == 'success') { ?>
+    Swal.fire({
+        icon: 'success',
+        title: 'Message Sent!',
+        text: 'Your message stored successfully',
+        confirmButtonColor: '#06b6d4'
+    });
+    <?php } else { ?>
+    Swal.fire({
+        icon: 'error',
+        title: 'Failed!',
+        text: 'Database insert error',
+        confirmButtonColor: '#ef4444'
+    });
+    <?php } ?>
+});
+</script>
+<?php
+    unset($_SESSION['form_status']); // clear after showing
+}
+?>
 
 <style>
-
-/* BASE THEME */
-body{
-    transition:0.4s ease;
+    input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
-/* DARK MODE (default) */
-body{
-    background:#0b1220;
-    color:#cbd5e1;
+input[type=number] {
+    -moz-appearance: textfield; /* Firefox */
+}
+/* Root Dark variables (Default) */
+:root {
+    --box-bg: #111827;
+    --input-bg: #0f172a;
+    --text-color: #ffffff;
+    --border-color: rgba(255,255,255,0.08);
+    --input-border: rgba(255,255,255,0.1);
+    --placeholder-color: #cbd5e1;
 }
 
-/* LIGHT MODE */
-body.light-mode{
-    background:#f8fafc;
-    color:#111827;
+/* Light mode overrides */
+body.light-mode {
+    --box-bg: #ffffff;
+    --input-bg: #f1f5f9;
+    --text-color: #111827;
+    --border-color: #e5e7eb;
+    --input-border: #cbd5e1;
+    --placeholder-color: #64748b;
 }
 
-/* CONTACT BOX */
+body {
+    background-color: #0b0f19;
+    transition: background-color 0.3s ease;
+}
+body.light-mode {
+    background-color: #f8fafc;
+}
+
+.contact-section{
+    padding:80px 0;
+}
+
+/* BOX */
 .contact-box{
-    background:rgba(17,24,39,0.85);
-    backdrop-filter:blur(12px);
-    padding:35px;
-    border-radius:22px;
-    border:1px solid rgba(255,255,255,0.08);
-    box-shadow:0 10px 30px rgba(0,0,0,0.25);
-    transition:0.4s ease;
+    background: var(--box-bg);
+    padding:30px;
+    border-radius:20px;
+    border:1px solid var(--border-color);
+    transition: background 0.3s ease, border 0.3s ease;
 }
 
-/* LIGHT MODE BOX */
-body.light-mode .contact-box{
-    background:#ffffff;
-    border:1px solid #e5e7eb;
-    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+/* TITLE */
+.section-title h2{
+    color: var(--text-color);
+    font-size:28px;
+    margin-bottom:20px;
 }
 
-/* INPUTS */
-.form-control{
-    background:#111827;
-    border:none;
-    color:#fff;
+.section-title span{
+    color:#06b6d4;
+}
+
+/* INPUT */
+.form-control, 
+.country-code,
+select.form-control,
+textarea.form-control {
+    width:100%;
     padding:12px;
+    margin-bottom:12px;
     border-radius:12px;
-    transition:0.3s;
+    background: var(--input-bg) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--input-border) !important;
+    outline:none;
+    transition: all 0.3s ease;
 }
 
-body.light-mode .form-control{
-    background:#f1f5f9;
-    color:#111;
+.form-control::placeholder, 
+textarea.form-control::placeholder {
+    color: var(--placeholder-color) !important;
 }
 
-.form-control:focus{
-    border:1px solid #38bdf8;
-    box-shadow:0 0 10px rgba(56,189,248,0.4);
+/* DROPDOWN ARROW FIX */
+select.form-control,
+.country-code{
+    appearance: auto !important;
+}
+
+/* PHONE GROUP */
+.phone-group{
+    display:flex;
+    gap:10px;
+}
+
+.country-code{
+    width:100px;
+    flex-shrink: 0;
 }
 
 /* BUTTON */
 .btn-custom{
-    background:linear-gradient(135deg,#38bdf8,#6366f1);
-    color:#fff;
-    padding:12px 30px;
+    width:100%;
+    padding:12px;
     border:none;
     border-radius:50px;
+    background:linear-gradient(135deg,#06b6d4,#6366f1);
+    color:#fff;
     font-weight:600;
-    transition:0.3s;
+    cursor:pointer;
+    transition: transform 0.2s;
 }
 
-.btn-custom:hover{
-    transform:translateY(-3px);
-    box-shadow:0 10px 20px rgba(56,189,248,0.3);
+.btn-custom:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
 }
 
 /* MAP */
 .map-box{
     width:100%;
     height:100%;
-    min-height:480px;
-    border-radius:22px;
+    min-height:520px;
+    border-radius:20px;
     overflow:hidden;
-    box-shadow:0 10px 30px rgba(0,0,0,0.3);
-    border:1px solid rgba(255,255,255,0.08);
-}
-
-body.light-mode .map-box{
-    border:1px solid #e5e7eb;
+    border:1px solid var(--border-color);
 }
 
 .map-box iframe{
@@ -5203,20 +4773,106 @@ body.light-mode .map-box{
     border:0;
 }
 
-/* SECTION TITLE */
-.section-title h2{
-    font-size:42px;
-    font-weight:700;
+/* RESPONSIVE */
+@media(max-width:991px){
+    .map-box{
+        min-height:350px;
+        margin-top: 20px;
+    }
 }
 
-.section-title span{
-    color:#38bdf8;
+@media(max-width:576px){
+    .phone-group{
+        flex-direction: row; /* Mobile size screen-il select code line break aagama correct position-la iruka flex box optimization */
+    }
 }
-
 </style>
 
-<!-- ================= THEME TOGGLE ================= -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+<?php if($success == "true"): ?>
+    Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Your message has been sent.',
+        confirmButtonColor: '#06b6d4'
+    });
+<?php elseif(!empty($error)): ?>
+    Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: '<?php echo $error; ?>',
+        confirmButtonColor: '#6366f1'
+    });
+<?php endif; ?>
+</script>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+document.getElementById("contactForm").addEventListener("submit", function(e){
+
+    e.preventDefault();
+
+    let name = document.getElementById("name").value.trim();
+    let country = document.getElementById("country").value;
+    let code = document.getElementById("countryCode").value;
+    let phone = document.getElementById("phone").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let service = document.getElementById("service").value;
+    let message = document.getElementById("message").value.trim();
+
+    let phoneRegex = /^[0-9]{10,15}$/;
+    let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // NAME
+    if(name.length < 3){
+        Swal.fire("Error","Name must be at least 3 characters","error");
+        return;
+    }
+
+    // COUNTRY
+    if(country === ""){
+        Swal.fire("Error","Select your country","warning");
+        return;
+    }
+
+    // PHONE
+    if(!phoneRegex.test(phone)){
+        Swal.fire("Error","Enter valid phone (10–15 digits)","error");
+        return;
+    }
+
+    // EMAIL
+    if(!emailRegex.test(email)){
+        Swal.fire("Error","Enter valid email","error");
+        return;
+    }
+
+    // SERVICE
+    if(service === ""){
+        Swal.fire("Error","Select service","warning");
+        return;
+    }
+
+    // MESSAGE
+    if(message.length < 10){
+        Swal.fire("Error","Message must be minimum 10 characters","warning");
+        return;
+    }
+
+    // SUCCESS
+    Swal.fire({
+        icon:'success',
+        title:'Message Ready!',
+        text:'Form validated successfully',
+        confirmButtonColor:'#06b6d4'
+    });
+
+    // OPTIONAL: submit after success
+    this.submit();
+
+});
+</script>
 <script>
 function toggleTheme(){
     document.body.classList.toggle("light-mode");
@@ -5445,44 +5101,53 @@ function toggleTheme(){
 }
 </script>
 
-<!-- FLOATING WHATSAPP 
-
-<a href="#" class="floating-whatsapp">
-
-  <i class="fab fa-whatsapp"></i>
-
-</a>-->
+<!------------------------------float---------------------->
 <!-- ====================================================== -->
 <!-- =============== FLOATING BUTTONS ===================== -->
 <!-- ====================================================== -->
 
-<!-- WHATSAPP BUTTON -->
+<!-- LEFT SIDE BUTTONS -->
+<div class="floating-left">
 
-<a href="https://wa.me/7397073151"
-   class="floating-btn whatsapp-btn"
-   target="_blank">
+    
+</div>
 
-    <i class="fab fa-whatsapp"></i>
+<!-- RIGHT SIDE BUTTONS -->
+<div class="floating-right">
 
-</a>
+    
 
-<!-- CONTACT BUTTON -->
+    <!-- SCROLL TOP -->
+    <button id="scrollTopBtn"
+            class="floating-btn scroll-top-btn">
 
-<a href="#contact"
-   class="floating-btn contact-btn">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
-    <i class="fa-solid fa-envelope"></i>
+    <!-- WHATSAPP -->
+    <a href="https://wa.me/7397073151"
+       target="_blank"
+       class="floating-btn whatsapp-btn">
 
-</a>
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <!-- INSTAGRAM -->
+    <a href="https://www.instagram.com/alphacrestdigital.in/"
+       target="_blank"
+       class="floating-btn insta-btn">
 
-<!-- SCROLL TOP BUTTON -->
+        <i class="fa-brands fa-instagram"></i>
+    </a>
 
-<button id="scrollTopBtn"
-        class="floating-btn scroll-top-btn">
+    <!-- CONTACT -->
+    <a href="#contact"
+       class="floating-btn contact-btn">
 
-    <i class="fa-solid fa-arrow-up"></i>
+        <i class="fa-solid fa-envelope"></i>
+    </a>
 
-</button>
+
+</div>
 
 <!-- ====================================================== -->
 <!-- ======================= CSS ========================== -->
@@ -5490,15 +5155,8 @@ function toggleTheme(){
 
 <style>
 
-/* ====================================================== */
-/* ================= FLOATING BUTTON ===================== */
-/* ====================================================== */
-
+/* COMMON BUTTON STYLE */
 .floating-btn{
-
-    position:fixed;
-
-    right:25px;
 
     width:58px;
     height:58px;
@@ -5508,156 +5166,118 @@ function toggleTheme(){
     justify-content:center;
 
     border-radius:50%;
-
-    text-decoration:none;
-
     border:none;
 
+    text-decoration:none;
     cursor:pointer;
 
-    z-index:9999;
-
+    font-size:22px;
     color:#fff;
 
-    font-size:22px;
-
-    transition:0.4s ease;
+    position:fixed;
+    z-index:9999;
 
     backdrop-filter:blur(12px);
 
-    box-shadow:
-    0 10px 30px rgba(0,0,0,0.25);
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+
+    transition:0.4s ease;
 
     animation:floatBtn 3s ease-in-out infinite;
 }
 
 /* HOVER */
-
 .floating-btn:hover{
-
-    transform:
-    translateY(-8px) scale(1.08);
-
-    color:#fff;
+    transform:translateY(-8px) scale(1.08);
 }
 
-/* ====================================================== */
-/* ================= WHATSAPP ============================ */
-/* ====================================================== */
-
-.whatsapp-btn{
-
+/* ================= LEFT SIDE ================= */
+.floating-left{
+    position:fixed;
+    left:25px;
     bottom:25px;
-
-    background:
-    linear-gradient(135deg,
-    #25D366,
-    #128C7E);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    z-index:9999;
 }
 
-/* ====================================================== */
-/* ================= CONTACT ============================= */
-/* ====================================================== */
+/* INSTAGRAM */
+.insta-btn{
+    position:relative;
+    background:linear-gradient(135deg,#f9ce34,#ee2a7b,#6228d7);
+}
 
+/* CONTACT */
 .contact-btn{
-
-    bottom:95px;
-
-    background:
-    linear-gradient(135deg,
-    #0ea5e9,
-    #6366f1);
+    position:relative;
+    background:linear-gradient(135deg,#0ea5e9,#6366f1);
 }
 
-/* ====================================================== */
-/* ================= SCROLL TOP ========================== */
-/* ====================================================== */
+/* ================= RIGHT SIDE ================= */
+.floating-right{
+    position:fixed;
+    right:25px;
+    bottom:25px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    z-index:9999;
+}
 
+/* WHATSAPP */
+.whatsapp-btn{
+    position:relative;
+    background:linear-gradient(135deg,#25D366,#128C7E);
+}
+
+/* SCROLL TOP */
 .scroll-top-btn{
-
-    bottom:165px;
+    position:relative;
+    background:linear-gradient(135deg,#f97316,#ef4444);
 
     opacity:0;
-
     visibility:hidden;
-
     transform:translateY(20px);
-
-    background:
-    linear-gradient(135deg,
-    #f97316,
-    #ef4444);
 }
 
-/* SHOW BUTTON */
-
+/* SHOW SCROLL BUTTON */
 .scroll-top-btn.show{
-
     opacity:1;
-
     visibility:visible;
-
     transform:translateY(0);
 }
 
-/* ====================================================== */
-/* ================= FLOAT ANIMATION ===================== */
-/* ====================================================== */
-
+/* FLOAT ANIMATION */
 @keyframes floatBtn{
-
-    0%{
-        transform:translateY(0);
-    }
-
-    50%{
-        transform:translateY(-8px);
-    }
-
-    100%{
-        transform:translateY(0);
-    }
-
+    0%{transform:translateY(0);}
+    50%{transform:translateY(-8px);}
+    100%{transform:translateY(0);}
 }
 
-/* ====================================================== */
-/* ================= LIGHT MODE ========================== */
-/* ====================================================== */
-
+/* LIGHT MODE */
 body.light-mode .floating-btn{
-
-    box-shadow:
-    0 12px 25px rgba(0,0,0,0.12);
+    box-shadow:0 12px 25px rgba(0,0,0,0.12);
 }
 
-/* ====================================================== */
-/* ================= MOBILE ============================== */
-/* ====================================================== */
-
+/* MOBILE */
 @media(max-width:576px){
 
     .floating-btn{
-
         width:52px;
         height:52px;
-
-        right:18px;
-
         font-size:20px;
     }
 
-    .whatsapp-btn{
-        bottom:18px;
+    .floating-left{
+        left:15px;
+        bottom:15px;
     }
 
-    .contact-btn{
-        bottom:82px;
+    .floating-right{
+        right:15px;
+        bottom:15px;
     }
-
-    .scroll-top-btn{
-        bottom:146px;
-    }
-
 }
 
 </style>
@@ -5668,41 +5288,32 @@ body.light-mode .floating-btn{
 
 <script>
 
-/* ====================================================== */
-/* ================= SCROLL TOP ========================== */
-/* ====================================================== */
-
+/* SCROLL BUTTON */
 const scrollTopBtn =
 document.getElementById("scrollTopBtn");
 
 window.addEventListener("scroll", function(){
 
     if(window.scrollY > 300){
-
         scrollTopBtn.classList.add("show");
-
-    }else{
-
+    } else {
         scrollTopBtn.classList.remove("show");
-
     }
 
 });
 
 /* SCROLL TO TOP */
-
 scrollTopBtn.addEventListener("click", function(){
 
     window.scrollTo({
-
         top:0,
         behavior:"smooth"
-
     });
 
 });
 
 </script>
+
 
 <!-- Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -5742,9 +5353,13 @@ form.addEventListener("submit", e => {
   });
 
 });
+document.querySelector("form").addEventListener("submit", function(){
+    document.getElementById("sendBtn").disabled = true;
+});
 </script>
 <!----mouse pointer---->
 
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
